@@ -57,6 +57,9 @@ Data awal dibuat sebagai template dan bukan klaim data pribadi. Ubah informasi b
 ### Mengubah data portfolio
 Data backend terdapat di `server/index.js`. Setelah mengubah data, simpan file dan refresh browser. Untuk mengubah tampilan, edit `src/App.jsx` dan `src/styles.css`.
 
+### Menambahkan sertifikat
+Edit daftar `certifications` di `server/index.js`, lalu isi tahun, nama sertifikat, dan penyelenggara. Simpan gambar sertifikat di folder `public` (misalnya `public/sertifikat-web.jpg`) dan isi properti `image` dengan path publiknya (misalnya `/sertifikat-web.jpg`). Jika `image` dikosongkan, portfolio akan menampilkan slot gambar sertifikat.
+
 ## API
 ### `GET /api/portfolio`
 Mengambil seluruh data portfolio.

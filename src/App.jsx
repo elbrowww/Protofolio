@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, ArrowUpRight, CheckCircle2, Code2, Globe, Lightbulb, Mail, MapPin, Pencil, Phone, Search, Send } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Award, CheckCircle2, Code2, Globe, Lightbulb, Mail, MapPin, Pencil, Phone, Search, Send } from "lucide-react";
 
 const fallback = {
   profile: {
     name: "ANGELLO ERIYA DEWANGGA", role: "FULL STACK DEVELOPER", location: "Indonesia",
-    email: "emailanda@example.com", phone: "+62 8xx xxxx xxxx",
+    email: "angellodewangga784@gmail.com", phone: "+62 823 3581 9350",
     availability: "Terbuka untuk peluang dan kolaborasi",
     about: "Saya adalah developer yang senang mengubah ide menjadi produk digital yang fungsional, cepat, dan mudah digunakan. Saya menikmati proses membangun antarmuka, merancang API, mengelola database, hingga menyiapkan aplikasi untuk digunakan.",
     stats: [{value:"01+",label:"TAHUN BELAJAR & BERKARYA"},{value:"10+",label:"PROJECT DIKERJAKAN"},{value:"05+",label:"TEKNOLOGI DIKUASAI"}]
@@ -19,8 +19,8 @@ const fallback = {
     {period:"2024 — 2025",role:"WEB DEVELOPMENT LEARNER",company:"Independent Learning",detail:"Mempelajari dasar frontend, backend, database relasional, REST API, version control, dan proses debugging."}
   ],
   certifications: [
-    {year:"2025",title:"Web Development Fundamentals",issuer:"Tambahkan nama penyelenggara",note:"Ganti dengan sertifikasi yang benar-benar Anda miliki."},
-    {year:"2025",title:"Database & API Development",issuer:"Tambahkan nama penyelenggara",note:"Tambahkan nomor atau tautan sertifikat jika tersedia."}
+    {year:"TAHUN",title:"Nama Sertifikat",issuer:"Nama Penyelenggara",note:"Tambahkan gambar sertifikat Anda.",image:""},
+    {year:"TAHUN",title:"Nama Sertifikat",issuer:"Nama Penyelenggara",note:"Tambahkan gambar sertifikat Anda.",image:""}
   ],
   skills: [
     {group:"FRONTEND",items:["HTML5","CSS3","JavaScript","React","Responsive UI"]},
@@ -39,7 +39,29 @@ function App() {
     fetch("/api/portfolio").then(r => r.ok ? r.json() : Promise.reject()).then(setData).catch(() => {});
   }, []);
 
-  const { profile, projects, skills } = data;
+  useEffect(() => {
+    const elements = document.querySelectorAll("[data-reveal]");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reducedMotion || !("IntersectionObserver" in window)) {
+      elements.forEach(element => element.classList.add("is-visible"));
+      return;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -24px 0px" });
+
+    elements.forEach(element => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
+
+  const { profile, projects, skills, certifications } = data;
   const update = (e) => setForm({...form, [e.target.name]: e.target.value});
   const submit = async (e) => {
     e.preventDefault(); setSending(true); setNotice(null);
@@ -55,12 +77,20 @@ function App() {
 
   return <main>
     <header className="topbar">
-      <a className="brand" href="#home"><span>FULL STACK<br/><small>DEVELOPER</small></span></a>
-      <a className="availability" href="#contact">AVAILABLE FOR FREELANCE <span className="availability-star">✳</span></a>
+      <a className="nav-brand" href="#home" aria-label="Kembali ke beranda">AD</a>
+      <nav className="nav-links" aria-label="Navigasi utama">
+        <a href="#projects">Work</a>
+        <a href="#about">About</a>
+        <a href="#certificates">Sertifikat</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a className="nav-email" href={`mailto:${profile.email}`} aria-label={`Kirim email ke ${profile.email}`}>
+        <Mail size={15}/><span>{profile.email}</span>
+      </a>
     </header>
 
     <section className="hero" id="home">
-      <div className="hero-bg-word" aria-hidden="true">PORTFOLIO</div>
+      <div className="hero-bg-word" aria-hidden="true">PORTOFOLIO</div>
       <div className="hero-copy">
         <p className="eyebrow"><span/> FULL STACK DEVELOPER</p>
         <p className="script">Hello, I'm</p>
@@ -72,15 +102,15 @@ function App() {
       <div className="hero-visual">
         <img src="/EL.png" alt="Profil Saya" />
       </div>
-      <div className="hero-side">
+      <div className="hero-side" data-reveal>
         <span className="side-star">✳</span><p>Turning ideas<br/>into powerful<br/><b>digital experiences.</b></p>
         <div className="stat-list">{profile.stats.map(s=><div className="stat" key={s.label}><strong>{s.value}</strong><small>{s.label}</small></div>)}</div>
       </div>
     </section>
 
     <section className="projects section-pad" id="projects">
-      <div className="section-title-row"><h2>SELECTED PROJECTS</h2><a className="section-note" href="#contact">VIEW ALL PROJECTS <ArrowRight size={18}/></a></div>
-      <div className="project-grid">{projects.map((p,i)=><article className="project-card" key={p.id}>
+      <div className="section-title-row" data-reveal><h2>SELECTED PROJECTS</h2><a className="section-note" href="#contact">VIEW ALL PROJECTS <ArrowRight size={18}/></a></div>
+      <div className="project-grid">{projects.map((p,i)=><article className="project-card" data-reveal key={p.id} style={{"--reveal-delay": `${i * 100}ms`}}>
         <a className={`project-art project-image-${i%3}`} href={p.url || "#contact"} aria-label={`Lihat ${p.name}`}>
           <span className="art-top"><span>{p.type}</span><ArrowUpRight size={15}/></span>
           <span className="art-name">{p.name}</span>
@@ -89,13 +119,34 @@ function App() {
       </article>)}</div>
     </section>
 
-    <section className="details-grid" id="skills">
-      <div className="education-panel section-pad">
+    <section className="certificates section-pad" id="certificates">
+      <div className="section-title-row" data-reveal>
+        <div><p className="eyebrow">LEARNING &amp; ACHIEVEMENTS</p><h2>CERTIFICATES</h2></div>
+        <span className="section-note">CREDENTIALS &amp; MILESTONES</span>
+      </div>
+      <div className="certificate-grid">{certifications.map((certificate,index)=><article className="certificate-card" data-reveal key={`${certificate.title}-${index}`} style={{"--reveal-delay": `${index * 100}ms`}}>
+        <div className="certificate-preview">
+          {certificate.image
+            ? <img src={certificate.image} alt={`Sertifikat ${certificate.title}`} />
+            : <div className="certificate-placeholder"><Award size={28}/><span>CERTIFICATE {String(index+1).padStart(2,"0")}</span><small>IMAGE SLOT</small></div>}
+          <span className="certificate-index">0{index+1}</span>
+        </div>
+        <div className="certificate-info">
+          <span className="certificate-year">{certificate.year}</span>
+          <h3>{certificate.title}</h3>
+          <p>{certificate.issuer}</p>
+          <small>{certificate.note}</small>
+        </div>
+      </article>)}</div>
+    </section>
+
+    <section className="details-grid" id="about">
+      <div className="education-panel section-pad" data-reveal>
         <h2>EDUCATION &amp; SKILLS</h2>
         <div className="education-block"><p className="eyebrow">EDUCATION</p><b>INFORMATICS / INFORMATION TECHNOLOGY</b><span>Indonesia · Ongoing</span></div>
         <div className="skills-block"><p className="eyebrow">SKILLS</p>{skills.map(group=><div className="skill-category" key={group.group}><span>{group.group}</span><div className="skill-pills">{group.items.map(item=><span key={item}>{item}</span>)}</div></div>)}</div>
       </div>
-      <div className="process-panel section-pad">
+      <div className="process-panel section-pad" data-reveal>
         <h2>WORK PROCESS</h2>
         <div className="process-list">{[
           ["01","DISCOVER","Understanding goals, audience, and project requirements."],
@@ -105,13 +156,13 @@ function App() {
           ["05","DELIVER","Testing, optimizing, and launching with perfection."]
         ].map(([number,title,description])=>{const ProcessIcon=[Search,Lightbulb,Pencil,Code2,Send][Number(number)-1];return <div className="process-item" key={number}><span>{number}</span><div className="process-icon"><ProcessIcon size={15}/></div><p><b>{title}</b>{description}</p></div>})}</div>
       </div>
-      <aside className="quote-panel"><span className="quote-mark">“</span><blockquote>Good design is not just how it looks, but how it works.</blockquote><span className="quote-sign">{profile.name.split(" ")[0]}.</span><div className="quote-bottom">LET'S CREATE<br/>SOMETHING GREAT<br/>TOGETHER.</div></aside>
+      <aside className="quote-panel" data-reveal><span className="quote-mark">“</span><blockquote>Good design is not just how it looks, but how it works.</blockquote><span className="quote-sign">{profile.name.split(" ")[0]}.</span><div className="quote-bottom">LET'S CREATE<br/>SOMETHING GREAT<br/>TOGETHER.</div></aside>
     </section>
 
     <section className="contact section-pad" id="contact">
-      <div className="contact-head"><h2>LET'S WORK<br/>TOGETHER<span className="availability-star">✳</span></h2><p>{profile.about}</p><a className="freelance-link" href={`mailto:${profile.email}`}><ArrowRight size={17}/> AVAILABLE FOR FREELANCE</a></div>
-      <div className="contact-links"><a href={`mailto:${profile.email}`}><Mail size={17}/>{profile.email}</a><a href={`https://${profile.email.split("@")[1] || "example.com"}`}><Globe size={17}/>{`www.${profile.email.split("@")[1] || "yourwebsite.com"}`}</a><a href={`tel:${profile.phone}`}><Phone size={17}/>{profile.phone}</a><span><MapPin size={17}/>{profile.location}</span></div>
-      <div className="contact-art" aria-hidden="true"><div className="laptop-screen"><span>WEB DESIGN<br/>DIGITAL<br/>EXPERIENCES</span><i/></div><div className="laptop-base"/></div>
+      <div className="contact-head" data-reveal><h2>LET'S WORK<br/>TOGETHER<span className="availability-star">✳</span></h2><p>{profile.about}</p><a className="freelance-link" href={`mailto:${profile.email}`}><ArrowRight size={17}/> AVAILABLE FOR FREELANCE</a></div>
+      <div className="contact-links" data-reveal><a href={`mailto:${profile.email}`}><Mail size={17}/>{profile.email}</a><a href={`https://${profile.email.split("@")[1] || "example.com"}`}><Globe size={17}/>{`www.${profile.email.split("@")[1] || "yourwebsite.com"}`}</a><a href={`tel:${profile.phone}`}><Phone size={17}/>{profile.phone}</a><span><MapPin size={17}/>{profile.location}</span></div>
+      <div className="contact-art" data-reveal aria-hidden="true"><div className="laptop-screen"><span>WEB DESIGN<br/>DIGITAL<br/>EXPERIENCES</span><i/></div><div className="laptop-base"/></div>
       <details className="contact-form"><summary>HAVE A PROJECT IN MIND? SEND A MESSAGE</summary><form onSubmit={submit}>
         <label className="visually-hidden" htmlFor="contact-name">Your name</label><input id="contact-name" name="name" value={form.name} onChange={update} placeholder="Nama lengkap" required maxLength="100"/>
         <label className="visually-hidden" htmlFor="contact-email">Email address</label><input id="contact-email" name="email" type="email" value={form.email} onChange={update} placeholder="nama@email.com" required maxLength="150"/>

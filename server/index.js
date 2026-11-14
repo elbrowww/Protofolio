@@ -40,8 +40,8 @@ const experience = [
 ];
 
 const certifications = [
-  { year: "2025", title: "Web Development Fundamentals", issuer: "Tambahkan nama penyelenggara", note: "Ganti dengan sertifikasi yang benar-benar Anda miliki." },
-  { year: "2025", title: "Database & API Development", issuer: "Tambahkan nama penyelenggara", note: "Tambahkan nomor atau tautan sertifikat jika tersedia." }
+  { year: "TAHUN", title: "Nama Sertifikat", issuer: "Nama Penyelenggara", note: "Tambahkan gambar sertifikat Anda.", image: "" },
+  { year: "TAHUN", title: "Nama Sertifikat", issuer: "Nama Penyelenggara", note: "Tambahkan gambar sertifikat Anda.", image: "" }
 ];
 
 const skills = [
